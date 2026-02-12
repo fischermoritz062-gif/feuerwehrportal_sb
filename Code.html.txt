@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mein Programm</title>
+</head>
+<body>
+  <h1>Hallo Welt!</h1>
+  <button onclick="zeigeText()">Klick mich</button>
+
+  <script>
+    function zeigeText() {
+      alert("Mein erstes Browser-Programm!");
+    }
+  </script>
+</body>
+</html>
