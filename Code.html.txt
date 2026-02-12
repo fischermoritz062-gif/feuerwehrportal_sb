@@ -1,16 +1,156 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Mein Programm</title>
-</head>
-<body>
-  <h1>Hallo Welt!</h1>
-  <button onclick="zeigeText()">Klick mich</button>
+import React, { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { motion } from "framer-motion";
+import { Plus, Trash2, FileText } from "lucide-react";
 
-  <script>
-    function zeigeText() {
-      alert("Mein erstes Browser-Programm!");
-    }
-  </script>
-</body>
-</html>
+export default function FeuerwehrEinsatzPortal() {
+  const [reports, setReports] = useState([]);
+  const [form, setForm] = useState({
+    einsatzNr: "",
+    datum: "",
+    ort: "",
+    stichwort: "",
+    fahrzeuge: "",
+    personal: "",
+    beschreibung: "",
+    massnahmen: "",
+  });
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const addReport = () => {
+    if (!form.einsatzNr || !form.datum || !form.ort) return;
+    setReports([...reports, { ...form, id: Date.now() }]);
+    setForm({
+      einsatzNr: "",
+      datum: "",
+      ort: "",
+      stichwort: "",
+      fahrzeuge: "",
+      personal: "",
+      beschreibung: "",
+      massnahmen: "",
+    });
+  };
+
+  const deleteReport = (id) => {
+    setReports(reports.filter((r) => r.id !== id));
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100 p-6">
+      <motion.h1
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="text-3xl font-bold mb-6 flex items-center gap-2"
+      >
+        <FileText className="w-8 h-8" /> Feuerwehr Einsatzportal
+      </motion.h1>
+
+      <Card className="mb-8 rounded-2xl shadow-lg">
+        <CardContent className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Input
+            placeholder="Einsatznummer"
+            name="einsatzNr"
+            value={form.einsatzNr}
+            onChange={handleChange}
+          />
+          <Input
+            type="date"
+            name="datum"
+            value={form.datum}
+            onChange={handleChange}
+          />
+          <Input
+            placeholder="Einsatzort"
+            name="ort"
+            value={form.ort}
+            onChange={handleChange}
+          />
+          <Input
+            placeholder="Stichwort (z.B. B2, THL1)"
+            name="stichwort"
+            value={form.stichwort}
+            onChange={handleChange}
+          />
+          <Input
+            placeholder="Fahrzeuge im Einsatz"
+            name="fahrzeuge"
+            value={form.fahrzeuge}
+            onChange={handleChange}
+          />
+          <Input
+            placeholder="Personalstärke"
+            name="personal"
+            value={form.personal}
+            onChange={handleChange}
+          />
+          <Textarea
+            placeholder="Lage / Beschreibung"
+            name="beschreibung"
+            value={form.beschreibung}
+            onChange={handleChange}
+            className="md:col-span-2"
+          />
+          <Textarea
+            placeholder="Getroffene Maßnahmen"
+            name="massnahmen"
+            value={form.massnahmen}
+            onChange={handleChange}
+            className="md:col-span-2"
+          />
+          <Button
+            onClick={addReport}
+            className="md:col-span-2 rounded-2xl text-lg"
+          >
+            <Plus className="mr-2 w-5 h-5" /> Einsatzbericht speichern
+          </Button>
+        </CardContent>
+      </Card>
+
+      <div className="grid gap-6">
+        {reports.map((report) => (
+          <motion.div
+            key={report.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <Card className="rounded-2xl shadow-md">
+              <CardContent className="p-6">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h2 className="text-xl font-semibold">
+                      Einsatz {report.einsatzNr} – {report.ort}
+                    </h2>
+                    <p className="text-sm text-gray-500">
+                      {report.datum} | {report.stichwort}
+                    </p>
+                  </div>
+                  <Button
+                    variant="destructive"
+                    size="icon"
+                    onClick={() => deleteReport(report.id)}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+
+                <div className="space-y-2 text-sm">
+                  <p><strong>Fahrzeuge:</strong> {report.fahrzeuge}</p>
+                  <p><strong>Personal:</strong> {report.personal}</p>
+                  <p><strong>Lage:</strong> {report.beschreibung}</p>
+                  <p><strong>Maßnahmen:</strong> {report.massnahmen}</p>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+}
